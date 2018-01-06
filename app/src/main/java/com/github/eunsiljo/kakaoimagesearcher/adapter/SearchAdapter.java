@@ -65,8 +65,8 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    public void add(SearchItemData SearchItemData) {
-        items.add(SearchItemData);
+    public void add(SearchItemData item) {
+        items.add(item);
         notifyDataSetChanged();
     }
 

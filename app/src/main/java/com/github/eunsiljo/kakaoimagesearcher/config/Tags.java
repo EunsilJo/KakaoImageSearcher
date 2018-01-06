@@ -6,6 +6,8 @@ package com.github.eunsiljo.kakaoimagesearcher.config;
 
 public class Tags {
 
+    public static final String TAG_IMAGE = "image";
+
     public static class SEARCH_VIEW_TYPE{
         public static final int SEARCH_ITEM = 0;
         public static final int SEARCH_FOOTER = 1;

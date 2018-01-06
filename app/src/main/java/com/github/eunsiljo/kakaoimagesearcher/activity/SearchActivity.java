@@ -1,5 +1,6 @@
 package com.github.eunsiljo.kakaoimagesearcher.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,10 +21,12 @@ import com.github.eunsiljo.kakaoimagesearcher.api.data.ImageItemVO;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.SearchImageResult;
 import com.github.eunsiljo.kakaoimagesearcher.api.requests.SearchRequests;
 import com.github.eunsiljo.kakaoimagesearcher.api.utils.APIUtils;
+import com.github.eunsiljo.kakaoimagesearcher.config.Tags;
 import com.github.eunsiljo.kakaoimagesearcher.data.NoItemData;
 import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
 import com.github.eunsiljo.kakaoimagesearcher.utils.SystemUtils;
 import com.github.eunsiljo.kakaoimagesearcher.utils.Utils;
+import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 import com.github.eunsiljo.kakaoimagesearcher.viewholder.OnItemClickListener;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
@@ -60,7 +63,6 @@ public class SearchActivity extends BaseActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        progressBar = findViewById(R.id.progressBar);
         editSearch = (EditText) findViewById(R.id.editSearch);
 
         mAdapter = new SearchAdapter();
@@ -70,8 +72,12 @@ public class SearchActivity extends BaseActivity {
         mListView.setLayoutManager(mLayoutManager);
         mAdapter.setNoItemData(new NoItemData(getString(R.string.no_search)));
 
+        progressBar = findViewById(R.id.progressBar);
+        CircleProgressBar circleProgressBar = (CircleProgressBar)progressBar.findViewById(R.id.circleProgressBar);
+        circleProgressBar.setColorSchemeColors(getResources().getColor(R.color.color_accent));
+
         refreshView = (SwipeRefreshLayout)findViewById(R.id.refreshView);
-        refreshView.setEnabled(false);
+        refreshView.setColorSchemeColors(getResources().getColor(R.color.color_accent));
     }
 
     private void initListener() {
@@ -79,22 +85,36 @@ public class SearchActivity extends BaseActivity {
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                log.d("JJO beforeTextChanged - " + s.toString());
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                log.d("JJO onTextChanged - " + s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 //TODO
+                log.d("JJO afterTextChanged - " + s.toString());
+                String search = s.toString();
+                if(search != null && search.length() > 0){
+                    filterData(search);
+                }else{
+                    refresh();
+                }
             }
         });
 
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                //TODO
+                ImageItemVO image = mAdapter.getItem(position).getImage();
+                if(image != null){
+                    Intent intent = new Intent(SearchActivity.this, PhotoViewActivity.class);
+                    intent.putExtra(Tags.TAG_IMAGE, image);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -127,6 +147,8 @@ public class SearchActivity extends BaseActivity {
                 String search = editSearch.getText().toString();
                 if(search != null && search.length() > 0){
                     filterData(search);
+                }else{
+                    refreshView.setRefreshing(false);
                 }
             }
         });
@@ -137,21 +159,19 @@ public class SearchActivity extends BaseActivity {
         mAdapter.setShowDefault(false);
         mAdapter.clear();
         mListPage = 1;
-
-        //loadData(mListPage, "kakao");
     }
 
     private void loadData(int page, String search){
-        if(!refreshView.isRefreshing()) {
+        if(!refreshView.isRefreshing() && !mAdapter.isShowFooter()) {
             startLoading();
         }
         new SearchRequests().requestSearchImageList(page, search)
                 .setListener(new APIResponseListener() {
                     @Override
                     public void onSuccess(Object vo) {
-                        if(!refreshView.isRefreshing()) {
+                        if(isLoading()){
                             stopLoading();
-                        }else{
+                        }else if(refreshView.isRefreshing()){
                             refreshView.setRefreshing(false);
                         }
                         setData((SearchImageResult)vo);
@@ -159,9 +179,9 @@ public class SearchActivity extends BaseActivity {
 
                     @Override
                     public void onFail(Object error) {
-                        if(!refreshView.isRefreshing()) {
+                        if(isLoading()){
                             stopLoading();
-                        }else{
+                        }else if(refreshView.isRefreshing()){
                             refreshView.setRefreshing(false);
                         }
                         APIUtils.onError(getApplicationContext(), error);
@@ -185,7 +205,7 @@ public class SearchActivity extends BaseActivity {
                 mAdapter.setShowDefault(true);
             }
         }
-        mAdapter.setShowFooter(result.getMeta().isIs_end());
+        mAdapter.setShowFooter(!result.getMeta().isIs_end());
     }
 
     private void filterData(String search){
@@ -197,7 +217,7 @@ public class SearchActivity extends BaseActivity {
         loadData(mListPage, search);
     }
 
-    public void refresh() {
+    private void refresh() {
         initData();
     }
 
@@ -213,5 +233,9 @@ public class SearchActivity extends BaseActivity {
         if(progressBar != null && progressBar.getVisibility() == View.VISIBLE) {
             progressBar.setVisibility(View.GONE);
         }
+    }
+
+    public boolean isLoading(){
+        return progressBar != null && (progressBar.getVisibility() == View.VISIBLE);
     }
 }

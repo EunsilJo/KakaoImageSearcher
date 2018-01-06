@@ -21,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.PhotoViewActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|uiMode|screenSize"
+            android:theme="@style/FullscreenTheme"
+            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>

@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.Gravity;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -32,22 +36,45 @@ public class Utils {
      *
      * @param view SimpleDraweeView
      * @param url  image url
+     * @param ratio  image ratio
      */
-    public static void setImage(Context context, SimpleDraweeView view, String url,
-                                float ratio) {
+    public static void setFrescoImage(SimpleDraweeView view, String url, float ratio) {
         if (url == null) {
             view.setImageURI(Uri.EMPTY);
         } else {
             if (url.length() == 0) {
                 view.setImageURI(Uri.EMPTY);
             }else {
-                GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(context.getResources())
+                GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(view.getResources())
                         .setFadeDuration(300)
-                        //.setPlaceholderImage(R.color.colorPrimaryDark)
+                        .setPlaceholderImage(R.drawable.ic_more_horiz_black_24dp)
                         .build();
                 view.setHierarchy(hierarchy);
                 view.setAspectRatio(ratio);
                 view.setImageURI(Uri.parse(url));
+            }
+        }
+    }
+
+    /**
+     * image setting
+     *
+     * @param view ImageView
+     * @param url  image url
+     */
+    public static void setGlideImage(ImageView view, String url){
+        if(url == null){
+            Glide.with(view.getContext()).load(Uri.EMPTY).into(view);
+        }else{
+            if(url.length() == 0){
+                Glide.with(view.getContext()).load(Uri.EMPTY).into(view);
+            }else{
+                Glide.with(view.getContext())
+                        .load(url)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .thumbnail(0.3f)
+                        .into(view);
             }
         }
     }
