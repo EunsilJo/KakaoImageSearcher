@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">KakaoImageSearcher</string>
+
+    <!-- Common -->
+    <string name="toast_common_guide_finish">\'뒤로\' 버튼을 한번 더 누르면 종료됩니다.</string>
+    <string name="toast_common_network_fail">네트워크 또는 시스템 오류입니다. 네트워크를 확인해주세요.</string>
+
+    <!-- Search -->
+    <string name="search_hint">검색하실 이미지를 입력해보세요.</string>
+    <string name="no_search">검색결과가 없습니다.</string>
+
+    <!-- API -->
+    <string name="develop_base_url">https://dapi.kakao.com</string>
+    <string name="release_base_url">https://dapi.kakao.com</string>
+    <string name="app_key">KakaoAK 3727473927c398b5a262980f6f143393</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.github.eunsiljo.kakaoimagesearcher.view.ClearEditText
+        android:id="@+id/editSearch"
+        style="@style/editStyle"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_edit_height"
+        android:paddingLeft="@dimen/common_margin_medium_s"
+        android:paddingRight="@dimen/common_margin_medium_s"
+        android:hint="@string/search_hint"
+        android:singleLine="true"
+        android:background="@drawable/edit_bg"
+        android:drawablePadding="@dimen/common_margin_micro" />
+
+</FrameLayout>

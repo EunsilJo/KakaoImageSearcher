@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/color_main</color>
+    <color name="colorPrimaryDark">@color/color_main_dark</color>
+    <color name="colorAccent">@color/color_accent</color>
+
+    <color name="black">@android:color/black</color>
+    <color name="white">@android:color/white</color>
+    <color name="transparent">@android:color/transparent</color>
+
+    <color name="text_hint">#33000000</color>
+
+    <color name="color_main">#C62828</color>
+    <color name="color_main_dark">#B71C1C</color>
+    <color name="color_accent">#7D95B3</color>
+
+</resources>

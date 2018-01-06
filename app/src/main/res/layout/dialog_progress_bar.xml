@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+        android:id="@+id/circleProgressBar"
+        app:mlpb_enable_circle_background="true"
+        app:mlpb_progress_stoke_width="@dimen/common_progressbar_width"
+        android:layout_width="@dimen/common_target_size"
+        android:layout_height="@dimen/common_target_size"/>
+
+</LinearLayout>

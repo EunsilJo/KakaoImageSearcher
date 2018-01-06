@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/common_no_item_margin_top"
+    android:paddingBottom="@dimen/common_margin"
+    android:paddingLeft="@dimen/common_margin"
+    android:paddingRight="@dimen/common_margin"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/txtDefault"
+        style="@style/textMedium" />
+
+</LinearLayout>
