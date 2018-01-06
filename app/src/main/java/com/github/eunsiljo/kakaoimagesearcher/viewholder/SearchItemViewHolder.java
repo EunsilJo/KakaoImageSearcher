@@ -5,8 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.eunsiljo.kakaoimagesearcher.R;
+import com.github.eunsiljo.kakaoimagesearcher.activity.BaseActivity;
+import com.github.eunsiljo.kakaoimagesearcher.api.data.ImageItemVO;
 import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
+import com.github.eunsiljo.kakaoimagesearcher.utils.Utils;
 
 /**
  * Created by xperi on 2018. 1. 6..
@@ -17,7 +21,7 @@ public class SearchItemViewHolder extends RecyclerView.ViewHolder{
     private SearchItemData mSearchItemData;
     private Context mContext;
 
-    private ImageView imgSearch;
+    private SimpleDraweeView imgSearch;
 
     private OnItemClickListener mListener;
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -28,7 +32,7 @@ public class SearchItemViewHolder extends RecyclerView.ViewHolder{
         super(itemView);
         mContext = itemView.getContext();
 
-        imgSearch = (ImageView)itemView.findViewById(R.id.imgSearch);
+        imgSearch = (SimpleDraweeView)itemView.findViewById(R.id.imgSearch);
 
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +47,10 @@ public class SearchItemViewHolder extends RecyclerView.ViewHolder{
     public void setSearchItem(SearchItemData searchItem) {
         if(searchItem != null) {
             mSearchItemData = searchItem;
-            //TODO
+
+            ImageItemVO image = searchItem.getImage();
+            float ratio = (float)image.getWidth() / (float)image.getHeight();
+            Utils.setImage(mContext, imgSearch, image.getImage_url(), ratio);
         }
     }
 }

@@ -36,18 +36,18 @@ public class SearchRequests extends Requests{
         mUniqueID = APIUtils.getAPIRandomCode();
     }
 
-    public SearchRequests requestSearchImageList(String search) {
-        return requestSearchImageList(search, APIConfig.SIZE_DEFAULT);
+    public SearchRequests requestSearchImageList(int page, String search) {
+        return requestSearchImageList(search, page, APIConfig.SIZE_DEFAULT);
     }
 
-    public SearchRequests requestSearchImageList(String search, int size) {
+    public SearchRequests requestSearchImageList(String search, int page, int size) {
         mRequestItem = new APIRequestVO<>();
 
         final Retrofit retrofit = new RequestClient(mContext).getClient();
         final SearchServices service = retrofit.create(SearchServices.class);
         final String uniqueID = APIUtils.getAPIRandomCode();
 
-        mRequestItem.setCall(service.requestSearchImageList(search, size));
+        mRequestItem.setCall(service.requestSearchImageList(search, page, size));
         mRequestItem.setCallback(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {

@@ -16,14 +16,18 @@ import com.github.eunsiljo.kakaoimagesearcher.R;
 import com.github.eunsiljo.kakaoimagesearcher.adapter.SearchAdapter;
 import com.github.eunsiljo.kakaoimagesearcher.api.APIResponseListener;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.ErrorVO;
+import com.github.eunsiljo.kakaoimagesearcher.api.data.ImageItemVO;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.SearchImageResult;
 import com.github.eunsiljo.kakaoimagesearcher.api.requests.SearchRequests;
 import com.github.eunsiljo.kakaoimagesearcher.api.utils.APIUtils;
 import com.github.eunsiljo.kakaoimagesearcher.data.NoItemData;
+import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
 import com.github.eunsiljo.kakaoimagesearcher.utils.SystemUtils;
 import com.github.eunsiljo.kakaoimagesearcher.utils.Utils;
 import com.github.eunsiljo.kakaoimagesearcher.viewholder.OnItemClickListener;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
+
+import java.util.ArrayList;
 
 public class SearchActivity extends BaseActivity {
 
@@ -36,6 +40,8 @@ public class SearchActivity extends BaseActivity {
 
     private SwipeRefreshLayout refreshView;
 
+    private int mListPage = 1;
+    private boolean isLast = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,23 +98,54 @@ public class SearchActivity extends BaseActivity {
             }
         });
 
+        mListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (isLast && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    // more data...
+                    if(mAdapter.isShowFooter()) {
+                        loadData(++mListPage, editSearch.getText().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (mAdapter.getItemCount() -1 <= mLayoutManager.findLastVisibleItemPosition()) {
+                    isLast = true;
+                } else {
+                    isLast = false;
+                }
+            }
+        });
+
         refreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //TODO
+                String search = editSearch.getText().toString();
+                if(search != null && search.length() > 0){
+                    filterData(search);
+                }
             }
         });
     }
 
     private void initData(){
-        //loadData("kakao");
+        mAdapter.setShowFooter(false);
+        mAdapter.setShowDefault(false);
+        mAdapter.clear();
+        mListPage = 1;
+
+        //loadData(mListPage, "kakao");
     }
 
-    private void loadData(String search){
+    private void loadData(int page, String search){
         if(!refreshView.isRefreshing()) {
             startLoading();
         }
-        new SearchRequests().requestSearchImageList(search)
+        new SearchRequests().requestSearchImageList(page, search)
                 .setListener(new APIResponseListener() {
                     @Override
                     public void onSuccess(Object vo) {
@@ -136,6 +173,32 @@ public class SearchActivity extends BaseActivity {
         if (result == null) {
             return;
         }
+        ArrayList<SearchItemData> items = new ArrayList<>();
+        ArrayList<ImageItemVO> images = result.getDocuments();
+        if(images != null && images.size() > 0){
+            for(ImageItemVO image : images){
+                items.add(new SearchItemData(image));
+            }
+            mAdapter.addAll(items);
+        }else{
+            if(mListPage == 1){
+                mAdapter.setShowDefault(true);
+            }
+        }
+        mAdapter.setShowFooter(result.getMeta().isIs_end());
+    }
+
+    private void filterData(String search){
+        mAdapter.setShowFooter(false);
+        mAdapter.setShowDefault(false);
+        mAdapter.clear();
+        mListPage = 1;
+
+        loadData(mListPage, search);
+    }
+
+    public void refresh() {
+        initData();
     }
 
     @Override

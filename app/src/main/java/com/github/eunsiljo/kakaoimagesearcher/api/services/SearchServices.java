@@ -15,5 +15,6 @@ public interface SearchServices {
 
     @GET(APIAddress.SEARCH + APIAddress.IMAGE + "?")
     Call<Object> requestSearchImageList(@Query(APIParamValue.QUERY) String search,
-                                     @Query(APIParamValue.SIZE) int size);
+                                        @Query(APIParamValue.PAGE) int page,
+                                        @Query(APIParamValue.SIZE) int size);
 }

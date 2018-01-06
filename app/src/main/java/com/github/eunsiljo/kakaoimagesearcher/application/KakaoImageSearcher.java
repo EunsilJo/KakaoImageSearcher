@@ -2,6 +2,7 @@ package com.github.eunsiljo.kakaoimagesearcher.application;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.github.eunsiljo.kakaoimagesearcher.api.requests.Requests;
 import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 
@@ -21,6 +22,7 @@ public class KakaoImageSearcher extends Application {
 
         // true : develop, false : release
         Requests.init(this, isDebug);
+        Fresco.initialize(this);
 
         // true : show log, false : hide log
         log.init(isDebug);
