@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.github.eunsiljo.kakaoimagesearcher.view.ProgressBarDialog;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class BaseActivity extends AppCompatActivity {

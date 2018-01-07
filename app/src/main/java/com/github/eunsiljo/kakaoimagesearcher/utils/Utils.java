@@ -22,7 +22,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.github.eunsiljo.kakaoimagesearcher.R;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class Utils {

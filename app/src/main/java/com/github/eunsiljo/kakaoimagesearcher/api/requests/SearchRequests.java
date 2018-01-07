@@ -17,7 +17,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class SearchRequests extends Requests{

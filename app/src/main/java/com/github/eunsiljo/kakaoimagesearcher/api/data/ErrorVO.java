@@ -1,7 +1,7 @@
 package com.github.eunsiljo.kakaoimagesearcher.api.data;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class ErrorVO {

@@ -7,7 +7,7 @@ import com.github.eunsiljo.kakaoimagesearcher.api.requests.Requests;
 import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class KakaoImageSearcher extends Application {

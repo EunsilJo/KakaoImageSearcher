@@ -3,7 +3,7 @@ package com.github.eunsiljo.kakaoimagesearcher.api.data;
 import java.util.ArrayList;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class SearchImageResult {

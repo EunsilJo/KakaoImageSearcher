@@ -11,7 +11,7 @@ import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
 import com.github.eunsiljo.kakaoimagesearcher.utils.Utils;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class SearchItemViewHolder extends RecyclerView.ViewHolder{

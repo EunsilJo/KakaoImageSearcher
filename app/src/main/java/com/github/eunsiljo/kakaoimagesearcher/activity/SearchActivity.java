@@ -6,19 +6,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.eunsiljo.kakaoimagesearcher.R;
 import com.github.eunsiljo.kakaoimagesearcher.adapter.SearchAdapter;
 import com.github.eunsiljo.kakaoimagesearcher.api.APIRequestManager;
 import com.github.eunsiljo.kakaoimagesearcher.api.APIResponseListener;
-import com.github.eunsiljo.kakaoimagesearcher.api.data.ErrorVO;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.ImageItemVO;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.SearchImageResult;
 import com.github.eunsiljo.kakaoimagesearcher.api.requests.SearchRequests;
@@ -27,12 +21,18 @@ import com.github.eunsiljo.kakaoimagesearcher.config.Tags;
 import com.github.eunsiljo.kakaoimagesearcher.data.NoItemData;
 import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
 import com.github.eunsiljo.kakaoimagesearcher.utils.SystemUtils;
-import com.github.eunsiljo.kakaoimagesearcher.utils.Utils;
 import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 import com.github.eunsiljo.kakaoimagesearcher.viewholder.OnItemClickListener;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+
 
 public class SearchActivity extends BaseActivity {
 
@@ -60,6 +60,7 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.activity_search);
         initLayout();
         initListener();
+        initRx();
         initData();
     }
 
@@ -86,7 +87,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initListener() {
-
+        /*
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,11 +101,11 @@ public class SearchActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                //TODO
                 log.d("JJO afterTextChanged - " + s.toString());
                 filterData(s.toString());
             }
         });
+        */
 
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -122,11 +123,15 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (isLast && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    // more data...
-                    if(mAdapter.isShowFooter()) {
-                        loadData(++mListPage, editSearch.getText().toString());
+                if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                    if(isLast){
+                        // more data...
+                        if(mAdapter.isShowFooter()) {
+                            loadData(++mListPage, editSearch.getText().toString());
+                        }
                     }
+                }else if(newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                    SystemUtils.hideSoftKeyboard(SearchActivity.this);
                 }
             }
 
@@ -147,6 +152,32 @@ public class SearchActivity extends BaseActivity {
                 filterData(editSearch.getText().toString());
             }
         });
+    }
+
+    private void initRx(){
+        RxTextView.textChanges(editSearch)
+                .skip(1)
+                .debounce(1000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<CharSequence>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(CharSequence charSequence) {
+                        log.d("JJO onNext - " + charSequence.toString());
+                        filterData(charSequence.toString());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     private void initData(){

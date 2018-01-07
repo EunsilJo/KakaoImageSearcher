@@ -1,12 +1,14 @@
 package com.github.eunsiljo.kakaoimagesearcher.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public class SystemUtils {
@@ -30,6 +32,33 @@ public class SystemUtils {
     // =============================================================================
     // Device
     // =============================================================================
+
+    /**
+     * Show keyboard
+     *
+     * @param activity activity
+     */
+    public static void showKeyboard(Activity activity) {
+        if (activity != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+    }
+
+    /**
+     * Hide keyboard
+     *
+     * @param activity activity
+     */
+    public static void hideSoftKeyboard(Activity activity) {
+        if (activity != null) {
+            InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
 
     public static void setStatusBarColor(Activity activity, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

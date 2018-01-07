@@ -6,7 +6,7 @@ package com.github.eunsiljo.kakaoimagesearcher.api.config;
 
 public class APIConfig {
 
-    public static final int SIZE_DEFAULT = 5;
+    public static final int SIZE_DEFAULT = 20;
     public static final String SORT_ACC = "accuracy";
     public static final String SORT_REC = "recency";
 }

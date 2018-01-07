@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 /**
- * Created by xperi on 2018. 1. 6..
+ * Created by EunsilJo on 2018. 1. 6..
  */
 
 public interface SearchServices {
