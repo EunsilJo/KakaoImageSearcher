@@ -56,13 +56,13 @@ public class SearchRequests extends Requests{
                     mAPIRequestManager.successResponse(uniqueID, vo, mAPIResponseListener);
                 } else {
                     ErrorVO errorVO = APIUtils.parseError(retrofit, response.errorBody());
-                    mAPIRequestManager.failResponse(uniqueID, errorVO, mAPIResponseListener);
+                    mAPIRequestManager.errorResponse(uniqueID, errorVO, mAPIResponseListener);
                 }
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                mAPIRequestManager.failResponse(uniqueID, t, mAPIResponseListener);
+                mAPIRequestManager.failResponse(uniqueID, t, call.isCanceled(), mAPIResponseListener);
             }
         });
         return this;

@@ -1,5 +1,7 @@
 package com.github.eunsiljo.kakaoimagesearcher.api;
 
+import com.github.eunsiljo.kakaoimagesearcher.api.data.ErrorVO;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,9 +108,16 @@ public class APIRequestManager<T> {
         }
     }
 
-    public void failResponse(String uniqueID, Object error, APIResponseListener listener){
+    public void errorResponse(String uniqueID, ErrorVO error, APIResponseListener listener){
         if(!isRequestRefreshToken) {
-            listener.onFail(error);
+            listener.onFail(error, false);
+            removeRequestCall(uniqueID);
+        }
+    }
+
+    public void failResponse(String uniqueID, Throwable t, boolean canceled, APIResponseListener listener){
+        if(!isRequestRefreshToken) {
+            listener.onFail(t, canceled);
             removeRequestCall(uniqueID);
         }
     }

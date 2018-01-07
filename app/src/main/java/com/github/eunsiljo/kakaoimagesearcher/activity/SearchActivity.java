@@ -12,9 +12,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.eunsiljo.kakaoimagesearcher.R;
 import com.github.eunsiljo.kakaoimagesearcher.adapter.SearchAdapter;
+import com.github.eunsiljo.kakaoimagesearcher.api.APIRequestManager;
 import com.github.eunsiljo.kakaoimagesearcher.api.APIResponseListener;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.ErrorVO;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.ImageItemVO;
@@ -97,12 +99,7 @@ public class SearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 //TODO
                 log.d("JJO afterTextChanged - " + s.toString());
-                String search = s.toString();
-                if(search != null && search.length() > 0){
-                    filterData(search);
-                }else{
-                    refresh();
-                }
+                filterData(s.toString());
             }
         });
 
@@ -144,12 +141,7 @@ public class SearchActivity extends BaseActivity {
         refreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String search = editSearch.getText().toString();
-                if(search != null && search.length() > 0){
-                    filterData(search);
-                }else{
-                    refreshView.setRefreshing(false);
-                }
+                filterData(editSearch.getText().toString());
             }
         });
     }
@@ -162,31 +154,29 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void loadData(int page, String search){
-        if(!refreshView.isRefreshing() && !mAdapter.isShowFooter()) {
-            startLoading();
-        }
-        new SearchRequests().requestSearchImageList(page, search)
-                .setListener(new APIResponseListener() {
-                    @Override
-                    public void onSuccess(Object vo) {
-                        if(isLoading()){
-                            stopLoading();
-                        }else if(refreshView.isRefreshing()){
-                            refreshView.setRefreshing(false);
-                        }
-                        setData((SearchImageResult)vo);
-                    }
+        startLoading();
+        APIRequestManager.getInstance().cancelAllRequest(true);
 
-                    @Override
-                    public void onFail(Object error) {
-                        if(isLoading()){
+        if(search != null && search.length() > 0) {
+            new SearchRequests().requestSearchImageList(page, search)
+                    .setListener(new APIResponseListener() {
+                        @Override
+                        public void onSuccess(Object vo) {
                             stopLoading();
-                        }else if(refreshView.isRefreshing()){
-                            refreshView.setRefreshing(false);
+                            setData((SearchImageResult) vo);
                         }
-                        APIUtils.onError(getApplicationContext(), error);
-                    }
-                }).build();
+
+                        @Override
+                        public void onFail(Object error, boolean canceled) {
+                            stopLoading();
+                            if (!canceled) {
+                                APIUtils.onError(getApplicationContext(), error);
+                            }
+                        }
+                    }).build();
+        }else{
+            stopLoading();
+        }
     }
 
     private void setData(SearchImageResult result) {
@@ -223,19 +213,33 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void startLoading(){
-        if(progressBar != null && progressBar.getVisibility() != View.VISIBLE) {
-            progressBar.setVisibility(View.VISIBLE);
+        if(!refreshView.isRefreshing() && !mAdapter.isShowFooter()) {
+            startProgressLoading();
         }
     }
 
     @Override
     public void stopLoading(){
+        if (isProgressLoading()) {
+            stopProgressLoading();
+        } else if (refreshView.isRefreshing()) {
+            refreshView.setRefreshing(false);
+        }
+    }
+
+    private void startProgressLoading(){
+        if(progressBar != null && progressBar.getVisibility() != View.VISIBLE) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void stopProgressLoading(){
         if(progressBar != null && progressBar.getVisibility() == View.VISIBLE) {
             progressBar.setVisibility(View.GONE);
         }
     }
 
-    public boolean isLoading(){
+    private boolean isProgressLoading(){
         return progressBar != null && (progressBar.getVisibility() == View.VISIBLE);
     }
 }
