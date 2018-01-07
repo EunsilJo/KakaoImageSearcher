@@ -2,6 +2,7 @@ package com.github.eunsiljo.kakaoimagesearcher.api;
 
 import com.github.eunsiljo.kakaoimagesearcher.api.data.ErrorVO;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +61,19 @@ public class APIRequestManager<T> {
 
         if (isStackRemove) {
             mHashRequest.clear();
+        }
+    }
+
+    public void cancelAllRequest(ArrayList<String> uniqueIDs, boolean isStackRemove) {
+        isRequestRefreshToken = false;
+        for(String uniqueID : uniqueIDs){
+            APIRequestVO item = mHashRequest.get(uniqueID);
+            item.getCall().cancel();
+
+            if(isStackRemove){
+                mHashRequest.remove(uniqueID);
+                uniqueIDs.remove(uniqueID);
+            }
         }
     }
 

@@ -48,6 +48,9 @@ public class SearchActivity extends BaseActivity {
     private int mListPage = 1;
     private boolean isLast = false;
 
+    private ArrayList<String> mSearchIDs = new ArrayList<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,10 +158,10 @@ public class SearchActivity extends BaseActivity {
 
     private void loadData(int page, String search){
         startLoading();
-        APIRequestManager.getInstance().cancelAllRequest(true);
+        APIRequestManager.getInstance().cancelAllRequest(mSearchIDs, true);
 
         if(search != null && search.length() > 0) {
-            new SearchRequests().requestSearchImageList(page, search)
+            SearchRequests request = new SearchRequests().requestSearchImageList(page, search)
                     .setListener(new APIResponseListener() {
                         @Override
                         public void onSuccess(Object vo) {
@@ -173,7 +176,9 @@ public class SearchActivity extends BaseActivity {
                                 APIUtils.onError(getApplicationContext(), error);
                             }
                         }
-                    }).build();
+                    });
+            request.build();
+            mSearchIDs.add(request.getUniqueID());
         }else{
             stopLoading();
         }

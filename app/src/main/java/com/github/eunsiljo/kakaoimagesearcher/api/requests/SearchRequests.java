@@ -68,6 +68,10 @@ public class SearchRequests extends Requests{
         return this;
     }
 
+    public String getUniqueID() {
+        return mUniqueID;
+    }
+
     /**
      * Set api response listener
      *
