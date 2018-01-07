@@ -13,7 +13,7 @@ import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 public class KakaoImageSearcher extends Application {
     private static KakaoImageSearcher instance;
 
-    public static final boolean isDebug = true;
+    public static final boolean isDebug = false;
 
     @Override
     public void onCreate() {
