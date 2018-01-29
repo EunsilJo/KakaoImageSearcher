@@ -23,6 +23,7 @@ import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
 import com.github.eunsiljo.kakaoimagesearcher.utils.SystemUtils;
 import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 import com.github.eunsiljo.kakaoimagesearcher.viewholder.OnItemClickListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
@@ -166,8 +167,14 @@ public class SearchActivity extends BaseActivity {
 
                     @Override
                     public void onNext(CharSequence charSequence) {
-                        log.d("JJO onNext - " + charSequence.toString());
-                        filterData(charSequence.toString());
+                        String search = charSequence.toString();
+                        log.d("JJO onNext - " + search);
+                        filterData(search);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, search);
+                        FirebaseAnalytics.getInstance(getApplicationContext())
+                                .logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
                     }
 
                     @Override

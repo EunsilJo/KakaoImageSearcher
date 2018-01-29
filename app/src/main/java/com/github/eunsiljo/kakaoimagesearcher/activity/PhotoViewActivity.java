@@ -8,6 +8,7 @@ import com.github.eunsiljo.kakaoimagesearcher.R;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.ImageItemVO;
 import com.github.eunsiljo.kakaoimagesearcher.config.Tags;
 import com.github.eunsiljo.kakaoimagesearcher.utils.Utils;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -41,6 +42,14 @@ public class PhotoViewActivity extends BaseActivity {
 
         if(image != null){
             Utils.setGlideImage(photoView, image.getImage_url());
+
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "ucccuccc");
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Eunsil Jo");
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+            bundle.putString(FirebaseAnalytics.Param.VALUE, image.getImage_url());
+            FirebaseAnalytics.getInstance(getApplicationContext())
+                    .logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         }
     }
 
