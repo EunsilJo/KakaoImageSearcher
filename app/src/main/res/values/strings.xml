@@ -13,4 +13,7 @@
     <string name="develop_base_url">https://dapi.kakao.com</string>
     <string name="release_base_url">https://dapi.kakao.com</string>
     <string name="app_key">KakaoAK 3727473927c398b5a262980f6f143393</string>
+
+    <string name="facebook_app_id">329831687523306</string>
+    <string name="fb_login_protocol_scheme">fb329831687523306</string>
 </resources>

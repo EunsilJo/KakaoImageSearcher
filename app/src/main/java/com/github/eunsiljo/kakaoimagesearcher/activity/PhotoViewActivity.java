@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.facebook.appevents.AppEventsLogger;
 import com.github.eunsiljo.kakaoimagesearcher.R;
 import com.github.eunsiljo.kakaoimagesearcher.api.data.ImageItemVO;
 import com.github.eunsiljo.kakaoimagesearcher.config.Tags;
@@ -16,9 +17,14 @@ public class PhotoViewActivity extends BaseActivity {
 
     private PhotoView photoView;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         setContentView(R.layout.activity_photo_view);
         initLayout();
         initListener();
@@ -48,7 +54,9 @@ public class PhotoViewActivity extends BaseActivity {
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Eunsil Jo");
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
             bundle.putString(FirebaseAnalytics.Param.VALUE, image.getImage_url());
-            FirebaseAnalytics.getInstance(getApplicationContext())
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+            AppEventsLogger.newLogger(getApplicationContext())
                     .logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         }
     }

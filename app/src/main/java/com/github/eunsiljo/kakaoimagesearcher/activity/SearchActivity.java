@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
+import com.facebook.appevents.AppEventsLogger;
 import com.github.eunsiljo.kakaoimagesearcher.R;
 import com.github.eunsiljo.kakaoimagesearcher.adapter.SearchAdapter;
 import com.github.eunsiljo.kakaoimagesearcher.api.APIRequestManager;
@@ -51,11 +52,13 @@ public class SearchActivity extends BaseActivity {
 
     private ArrayList<String> mSearchIDs = new ArrayList<>();
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         SystemUtils.setStatusBarColor(SearchActivity.this, getResources().getColor(R.color.colorPrimaryDark));
 
         setContentView(R.layout.activity_search);
@@ -173,7 +176,9 @@ public class SearchActivity extends BaseActivity {
 
                         Bundle bundle = new Bundle();
                         bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, search);
-                        FirebaseAnalytics.getInstance(getApplicationContext())
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+
+                        AppEventsLogger.newLogger(getApplicationContext())
                                 .logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
                     }
 
