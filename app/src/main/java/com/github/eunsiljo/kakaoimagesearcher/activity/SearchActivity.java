@@ -24,6 +24,9 @@ import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
 import com.github.eunsiljo.kakaoimagesearcher.utils.SystemUtils;
 import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 import com.github.eunsiljo.kakaoimagesearcher.viewholder.OnItemClickListener;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
@@ -53,12 +56,15 @@ public class SearchActivity extends BaseActivity {
     private ArrayList<String> mSearchIDs = new ArrayList<>();
 
     private FirebaseAnalytics mFirebaseAnalytics;
+    private Tracker mTracker;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mTracker = GoogleAnalytics.getInstance(this).newTracker(getString(R.string.ga_trackingId));
+
         SystemUtils.setStatusBarColor(SearchActivity.this, getResources().getColor(R.color.colorPrimaryDark));
 
         setContentView(R.layout.activity_search);
@@ -180,6 +186,10 @@ public class SearchActivity extends BaseActivity {
 
                         AppEventsLogger.newLogger(getApplicationContext())
                                 .logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+
+                        mTracker.send(new HitBuilders.EventBuilder()
+                                .setCategory(FirebaseAnalytics.Event.SEARCH)
+                                .setAction(search).build());
                     }
 
                     @Override

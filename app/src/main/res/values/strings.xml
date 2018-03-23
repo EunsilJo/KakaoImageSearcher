@@ -16,4 +16,5 @@
 
     <string name="facebook_app_id">329831687523306</string>
     <string name="fb_login_protocol_scheme">fb329831687523306</string>
+    <string name="ga_trackingId">UA-116294543-1</string>
 </resources>
