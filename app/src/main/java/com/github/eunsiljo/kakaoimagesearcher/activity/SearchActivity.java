@@ -1,11 +1,14 @@
 package com.github.eunsiljo.kakaoimagesearcher.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -21,13 +24,21 @@ import com.github.eunsiljo.kakaoimagesearcher.api.utils.APIUtils;
 import com.github.eunsiljo.kakaoimagesearcher.config.Tags;
 import com.github.eunsiljo.kakaoimagesearcher.data.NoItemData;
 import com.github.eunsiljo.kakaoimagesearcher.data.SearchItemData;
+import com.github.eunsiljo.kakaoimagesearcher.manager.PropertyManager;
 import com.github.eunsiljo.kakaoimagesearcher.utils.SystemUtils;
+import com.github.eunsiljo.kakaoimagesearcher.utils.Utils;
 import com.github.eunsiljo.kakaoimagesearcher.utils.log;
 import com.github.eunsiljo.kakaoimagesearcher.viewholder.OnItemClickListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
+
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
@@ -58,6 +69,8 @@ public class SearchActivity extends BaseActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
     private Tracker mTracker;
 
+    private FloatingActionButton fabShare;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +85,8 @@ public class SearchActivity extends BaseActivity {
         initListener();
         initRx();
         initData();
+
+        checkInvitebyDynamicLink();
     }
 
     private void initLayout() {
@@ -94,6 +109,8 @@ public class SearchActivity extends BaseActivity {
 
         refreshView = (SwipeRefreshLayout)findViewById(R.id.refreshView);
         refreshView.setColorSchemeColors(getResources().getColor(R.color.color_accent));
+
+        fabShare = (FloatingActionButton)findViewById(R.id.fabShare);
     }
 
     private void initListener() {
@@ -160,6 +177,16 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 filterData(editSearch.getText().toString());
+            }
+        });
+
+        fabShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String search = editSearch.getText().toString();
+                if(search != null && search.length() > 0) {
+                    makeInviteDynamicLink(search);
+                }
             }
         });
     }
@@ -267,6 +294,60 @@ public class SearchActivity extends BaseActivity {
 
     private void refresh() {
         initData();
+    }
+
+    private void makeInviteDynamicLink(String userId){
+        String link = "https://github.com/EunsilJo/KakaoImageSearcher/?invitedby=" + userId;
+        FirebaseDynamicLinks.getInstance().createDynamicLink()
+            .setLink(Uri.parse(link))
+            .setDynamicLinkDomain("vm2vg.app.goo.gl")
+            .setAndroidParameters(
+                    new DynamicLink.AndroidParameters.Builder("com.github.eunsiljo.kakaoimagesearcher")
+                            .build())
+            .setGoogleAnalyticsParameters(
+                    new DynamicLink.GoogleAnalyticsParameters.Builder()
+                            .setCampaign("test_campaign")
+                            .setSource("test_source")
+                            .setMedium("test_medium")
+                            .setTerm("test_term")
+                            .build())
+            .buildShortDynamicLink()
+            .addOnSuccessListener(new OnSuccessListener<ShortDynamicLink>() {
+                @Override
+                public void onSuccess(ShortDynamicLink shortDynamicLink) {
+                    sendInviteDynamicLink(shortDynamicLink.getShortLink());
+                }
+            });
+    }
+
+    private void sendInviteDynamicLink(Uri link){
+        String subject = "친구추천 이벤트 공유";
+        Intent intent =  new Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .putExtra(Intent.EXTRA_SUBJECT, subject)
+                .putExtra(Intent.EXTRA_TEXT, link.toString());
+        startActivity(Intent.createChooser(intent, subject));
+    }
+
+    private void checkInvitebyDynamicLink(){
+        if(PropertyManager.getInstance().getReferrerUid() == null){
+            FirebaseDynamicLinks.getInstance()
+                    .getDynamicLink(getIntent())
+                    .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                        @Override
+                        public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                            Uri deepLink = null;
+                            if (pendingDynamicLinkData != null) {
+                                deepLink = pendingDynamicLinkData.getLink();
+                            }
+                            if (deepLink != null
+                                    && deepLink.getBooleanQueryParameter("invitedby", false)) {
+                                PropertyManager.getInstance().setReferrerUid(
+                                        deepLink.getQueryParameter("invitedby"));
+                            }
+                        }
+                    });
+        }
     }
 
     @Override
