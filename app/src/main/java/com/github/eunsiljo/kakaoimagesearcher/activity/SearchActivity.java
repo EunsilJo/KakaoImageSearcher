@@ -298,6 +298,8 @@ public class SearchActivity extends BaseActivity {
 
     private void makeInviteDynamicLink(String userId){
         String link = "https://github.com/EunsilJo/KakaoImageSearcher/?invitedby=" + userId;
+        String imageUrl = "https://lh3.googleusercontent.com/"
+                + "ZkOQb0GycVmxzAN5rx2fxD8N7HhbtQ3FPOzCIPiE3uSNw_hKG_DCi9mmInY8ba_QgcFv=w3360-h1820-rw";
         FirebaseDynamicLinks.getInstance().createDynamicLink()
             .setLink(Uri.parse(link))
             .setDynamicLinkDomain("vm2vg.app.goo.gl")
@@ -307,10 +309,16 @@ public class SearchActivity extends BaseActivity {
             .setGoogleAnalyticsParameters(
                     new DynamicLink.GoogleAnalyticsParameters.Builder()
                             .setCampaign("test_campaign")
-                            .setSource("test_source")
+                            .setSource(userId)
                             .setMedium("test_medium")
                             .setTerm("test_term")
                             .build())
+            .setSocialMetaTagParameters(
+                    new DynamicLink.SocialMetaTagParameters.Builder()
+                    .setTitle("ImageSearcher")
+                    .setDescription("The sample app that helps you to search images with the kakao open api.")
+                    .setImageUrl(Uri.parse(imageUrl))
+                    .build())
             .buildShortDynamicLink()
             .addOnSuccessListener(new OnSuccessListener<ShortDynamicLink>() {
                 @Override
