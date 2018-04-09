@@ -86,7 +86,10 @@ public class SearchActivity extends BaseActivity {
         initRx();
         initData();
 
-        checkInvitebyDynamicLink();
+        if(PropertyManager.getInstance().getFirstOpen()) {
+            PropertyManager.getInstance().setFirstOpen(false);
+            checkInvitebyDynamicLink();
+        }
     }
 
     private void initLayout() {
@@ -338,24 +341,24 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void checkInvitebyDynamicLink(){
-        if(PropertyManager.getInstance().getReferrerUid() == null){
-            FirebaseDynamicLinks.getInstance()
-                    .getDynamicLink(getIntent())
-                    .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-                        @Override
-                        public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
-                            Uri deepLink = null;
-                            if (pendingDynamicLinkData != null) {
-                                deepLink = pendingDynamicLinkData.getLink();
-                            }
-                            if (deepLink != null
-                                    && deepLink.getBooleanQueryParameter("invitedby", false)) {
-                                PropertyManager.getInstance().setReferrerUid(
-                                        deepLink.getQueryParameter("invitedby"));
-                            }
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                        Uri deepLink = null;
+                        if (pendingDynamicLinkData != null) {
+                            deepLink = pendingDynamicLinkData.getLink();
                         }
-                    });
-        }
+                        if (deepLink != null
+                                && deepLink.getBooleanQueryParameter("invitedby", false)) {
+                            Utils.showAlertDialogOk(SearchActivity.this,
+                                    String.format(getString(R.string.dialog_dynamic_link),
+                                            deepLink.getQueryParameter("invitedby")),
+                                    null);
+                        }
+                    }
+                });
     }
 
     @Override

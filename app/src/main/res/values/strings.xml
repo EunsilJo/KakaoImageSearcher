@@ -9,6 +9,9 @@
     <string name="search_hint">검색하실 이미지를 입력해보세요.</string>
     <string name="no_search">검색결과가 없습니다.</string>
 
+    <!-- DynamicLink -->
+    <string name="dialog_dynamic_link">%1$s 님이 초대하셨군요! ImageSearcher 에서 다양한 이미지를 검색해보세요 :)</string>
+
     <!-- API -->
     <string name="develop_base_url">https://dapi.kakao.com</string>
     <string name="release_base_url">https://dapi.kakao.com</string>

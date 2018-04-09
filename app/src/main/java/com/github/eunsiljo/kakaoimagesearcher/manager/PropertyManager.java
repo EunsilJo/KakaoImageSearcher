@@ -25,14 +25,14 @@ public class PropertyManager {
         mEditor = mPrefs.edit();
     }
 
-    private static final String REFERRER_UID = "referrer_uid";
+    private static final String FIRST_OPEN = "first_open";
 
-    public String getReferrerUid() {
-        return mPrefs.getString(REFERRER_UID, null);
+    public boolean getFirstOpen() {
+        return mPrefs.getBoolean(FIRST_OPEN, true);
     }
 
-    public void setReferrerUid(String referrerUid) {
-        mEditor.putString(REFERRER_UID, referrerUid);
+    public void setFirstOpen(boolean first) {
+        mEditor.putBoolean(FIRST_OPEN, first);
         mEditor.commit();
     }
 }

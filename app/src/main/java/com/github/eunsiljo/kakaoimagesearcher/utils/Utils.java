@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
@@ -85,5 +86,22 @@ public class Utils {
 
     public static void showToast(Activity activity, String msg){
         Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    // =============================================================================
+    // Alert Dialog
+    // =============================================================================
+
+    public static void showAlertDialogOk(Activity activity, String msg,
+            MaterialDialog.SingleButtonCallback listenerOk){
+        if(activity.isFinishing()) {
+            return;
+        }
+        new MaterialDialog.Builder(activity)
+                .content(msg)
+                .positiveText(android.R.string.ok)
+                .onPositive(listenerOk)
+                .cancelable(false)
+                .show();
     }
 }
